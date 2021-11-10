@@ -1,0 +1,40 @@
+{
+  "StartAt": "read_xml",
+  "States": {
+    "read_xml": {
+      "Type": "Task",
+      "InputPath": "$",
+      "Resource": "arn:aws:lambda:us-east-1:101831906411:function:vif-unified-ingest-read-xml-dev",
+      "Next": "validate"
+    },
+    "validate": {
+      "Type": "Task",
+      "InputPath": "$",
+      "Resource": "arn:aws:lambda:us-east-1:101831906411:function:vif-unified-ingest-validate-dev",
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "KeyError"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 0
+        },
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "IntervalSeconds": 10,
+          "MaxAttempts": 2,
+          "BackoffRate": 20
+        }
+      ],
+      "Next": "ingest"
+    },
+    "ingest": {
+      "Type": "Task",
+      "InputPath": "$",
+      "Resource": "arn:aws:lambda:us-east-1:101831906411:function:vif-unified-ingest-ingest-dev",
+      "End": true
+    }
+  }
+}
