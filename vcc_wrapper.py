@@ -132,3 +132,4 @@ def lambda_handler(event, context):
     }
 
     return ret
+# Giang Duong
